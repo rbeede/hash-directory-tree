@@ -89,6 +89,7 @@ public class Main {
 					fwriter.write(file.toString().replace("\"", "\"\""));  // All internal " with double  ""
 					fwriter.write('"');  // close of third field
 					// Don't write \r\n here, only for next row if any (no trailing \r\n at end of file)
+					fwriter.flush();
 				} catch(final IOException excep) {
 					log.error(excep,excep);
 				}
@@ -121,25 +122,20 @@ public class Main {
 	
 	private static void setupLogging() {
 		final Layout layout = new PatternLayout("%d{yyyy-MM-dd HH:mm:ss,SSS Z}\t%-5p\tThread=%t\t%c\t%m%n");
-		
-		
-		// Use an async logger for speed
-		final AsyncAppender asyncAppender = new AsyncAppender();
-		asyncAppender.setThreshold(Level.ALL);
-		
+
 		Logger.getRootLogger().setLevel(Level.ALL);
-		Logger.getRootLogger().addAppender(asyncAppender);
+		Logger.getRootLogger().addAppender();
 		
 		
 		// Setup the logger to also log to the console
 		final ConsoleAppender consoleAppender = new ConsoleAppender(layout);
 		consoleAppender.setEncoding("UTF-8");
 		consoleAppender.setThreshold(Level.INFO);
-		asyncAppender.addAppender(consoleAppender);
+		Logger.getRootLogger().addAppender(consoleAppender);
 		
 		
 		// Setup the logger to log into the current working directory
-		final File logFile = new File(System.getProperty("user.dir"), getFormattedDatestamp(null) + ".log");
+		final File logFile = new File(System.getProperty("user.dir"), "HDT_" + getFormattedDatestamp(null) + ".log");
 		final FileAppender fileAppender;
 		try {
 			fileAppender = new FileAppender(layout, logFile.getAbsolutePath());
@@ -150,7 +146,7 @@ public class Main {
 		}
 		fileAppender.setEncoding("UTF-8");
 		fileAppender.setThreshold(Level.ALL);
-		asyncAppender.addAppender(fileAppender);
+		Logger.getRootLogger().addAppender(fileAppender);
 		
 		System.out.println("Logging to " + logFile.getAbsolutePath());
 	}
