@@ -36,7 +36,7 @@ import org.apache.logging.log4j.core.layout.PatternLayout;
  *
  */
 public class Main {
-	private static final Logger log = Logger.getLogger(Main.class);
+	private static final Logger log = LogManager.getLogger(Main.class);
 	
 	public static void main(final String[] args) throws IOException, InterruptedException {
 		if(null == args || args.length != 2) {
@@ -138,7 +138,7 @@ public class Main {
 
 		final File logFile = new File(System.getProperty("user.dir"), "HDT_" + getFormattedDatestamp(null) + ".log");
 		FileAppender fileAppender = FileAppender.newBuilder()
-				.withFileName(logFile)
+				.withFileName(logFile.getAbsolutePath())
 				.withName("File")
 				.withLayout(layout)
 				.build();
