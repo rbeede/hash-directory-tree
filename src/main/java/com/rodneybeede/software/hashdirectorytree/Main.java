@@ -5,24 +5,29 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileWriter;
 import java.io.IOException;
+
 import java.nio.file.FileVisitResult;
 import java.nio.file.FileVisitor;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.attribute.BasicFileAttributes;
+
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+
 import java.util.Date;
 
-import org.apache.log4j.AsyncAppender;
-import org.apache.log4j.ConsoleAppender;
-import org.apache.log4j.FileAppender;
-import org.apache.log4j.Layout;
-import org.apache.log4j.Level;
-import org.apache.log4j.LogManager;
-import org.apache.log4j.Logger;
-import org.apache.log4j.PatternLayout;
+import org.apache.commons.codec.digest.DigestUtils;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.core.Layout;
+import org.apache.logging.log4j.core.appender.ConsoleAppender;
+import org.apache.logging.log4j.core.appender.FileAppender;
+import org.apache.logging.log4j.core.layout.PatternLayout;
+
 
 /**
  * Output is https://tools.ietf.org/html/rfc4180
@@ -31,7 +36,7 @@ import org.apache.log4j.PatternLayout;
  *
  */
 public class Main {
-	private static final Logger log = Logger.getLogger(Main.class);
+	private static final Logger log = LogManager.getLogger(Main.class);
 	
 	public static void main(final String[] args) throws IOException, InterruptedException {
 		if(null == args || args.length != 2) {
@@ -49,8 +54,8 @@ public class Main {
 		final Path sourceDirectory = Paths.get(args[0]).toRealPath();
 		final Path csvOutputFilePath = Paths.get(args[1]).toAbsolutePath();  // RealPath doesn't exist yet
 		
-		log.info("Source directory (real canonical) is " + sourceDirectory);
-		log.info("CSV report output file path (real canonical) is " + csvOutputFilePath);
+		log.info("Source directory (real canonical) is {}", sourceDirectory);
+		log.info("CSV report output file path (real canonical) is {}", csvOutputFilePath);
 
 		
 		final FileWriter fwriter = new FileWriter(csvOutputFilePath.toFile());
@@ -72,7 +77,7 @@ public class Main {
 
 			@Override
 			public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
-				log.info("Hashing " + file);
+				log.info("Hashing {}", file);
 				
 				try {
 					final FileInputStream fis = new FileInputStream(file.toFile());
@@ -89,6 +94,7 @@ public class Main {
 					fwriter.write(file.toString().replace("\"", "\"\""));  // All internal " with double  ""
 					fwriter.write('"');  // close of third field
 					// Don't write \r\n here, only for next row if any (no trailing \r\n at end of file)
+					fwriter.flush();
 				} catch(final IOException excep) {
 					log.error(excep,excep);
 				}
@@ -99,7 +105,7 @@ public class Main {
 
 			@Override
 			public FileVisitResult visitFileFailed(Path file, IOException exc) throws IOException {
-				log.error("Failed to access:  " + file, exc);
+				log.error("Failed to access:  {}", file, exc);
 				
 				return FileVisitResult.CONTINUE;
 			}
@@ -120,38 +126,32 @@ public class Main {
 	
 	
 	private static void setupLogging() {
-		final Layout layout = new PatternLayout("%d{yyyy-MM-dd HH:mm:ss,SSS Z}\t%-5p\tThread=%t\t%c\t%m%n");
-		
-		
-		// Use an async logger for speed
-		final AsyncAppender asyncAppender = new AsyncAppender();
-		asyncAppender.setThreshold(Level.ALL);
-		
-		Logger.getRootLogger().setLevel(Level.ALL);
-		Logger.getRootLogger().addAppender(asyncAppender);
-		
-		
-		// Setup the logger to also log to the console
-		final ConsoleAppender consoleAppender = new ConsoleAppender(layout);
-		consoleAppender.setEncoding("UTF-8");
-		consoleAppender.setThreshold(Level.INFO);
-		asyncAppender.addAppender(consoleAppender);
-		
-		
-		// Setup the logger to log into the current working directory
-		final File logFile = new File(System.getProperty("user.dir"), getFormattedDatestamp(null) + ".log");
-		final FileAppender fileAppender;
-		try {
-			fileAppender = new FileAppender(layout, logFile.getAbsolutePath());
-		} catch (final IOException e) {
-			e.printStackTrace();
-			log.error(e,e);
-			return;
-		}
-		fileAppender.setEncoding("UTF-8");
-		fileAppender.setThreshold(Level.ALL);
-		asyncAppender.addAppender(fileAppender);
-		
+		Layout<?> layout = PatternLayout.newBuilder()
+				.withPattern("%d{yyyy-MM-dd HH:mm:ss,SSS Z}\t%-5p\tThread=%t\t%c\t%m%n")
+				.build();
+
+		ConsoleAppender consoleAppender = ConsoleAppender.newBuilder()
+				.setName("Console")
+				.setLayout(layout)
+				.build();
+		consoleAppender.start();
+
+		final File logFile = new File(System.getProperty("user.dir"), "HDT_" + getFormattedDatestamp(null) + ".log");
+		FileAppender fileAppender = FileAppender.newBuilder()
+				.withFileName(logFile.getAbsolutePath())
+				.withName("File")
+				.withLayout(layout)
+				.build();
+		fileAppender.start();
+
+		org.apache.logging.log4j.core.Logger rootLogger =
+				(org.apache.logging.log4j.core.Logger) LogManager.getRootLogger();
+
+		rootLogger.addAppender(consoleAppender);
+		rootLogger.addAppender(fileAppender);
+		rootLogger.setLevel(Level.INFO);
+
+
 		System.out.println("Logging to " + logFile.getAbsolutePath());
 	}
 	
