@@ -1,100 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-	<modelVersion>4.0.0</modelVersion>
-	<groupId>com.rodneybeede.software</groupId>
-	<artifactId>hash-directory-tree</artifactId>
-	<packaging>jar</packaging>
-	<version>2026.05.31</version>
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>com.rodneybeede.software</groupId>
+    <artifactId>hash-directory-tree</artifactId>
+    <packaging>jar</packaging>
+    <version>2026.05.31</version>
 
-	<name>hash-directory-tree</name>
-	<url>http://www.rodneybeede.com/</url>
-	<inceptionYear>2018</inceptionYear>
+    <name>hash-directory-tree</name>
+    <url>http://www.rodneybeede.com/</url>
+    <inceptionYear>2018</inceptionYear>
 
-	<licenses>
-		<license>
-			<name>GNU AFFERO GENERAL PUBLIC LICENSE</name>
-			<url>http://www.gnu.org/licenses/agpl.html</url>
-			<distribution>repo</distribution>
-			<comments>Version 3, 19 November 2007</comments>
-		</license>
-	</licenses>
+    <licenses>
+        <license>
+            <name>GNU AFFERO GENERAL PUBLIC LICENSE</name>
+            <url>http://www.gnu.org/licenses/agpl.html</url>
+            <distribution>repo</distribution>
+            <comments>Version 3, 19 November 2007</comments>
+        </license>
+    </licenses>
 
-	<organization>
-		<name>rodneybeede.com</name>
-		<url>http://www.rodneybeede.com/</url>
-	</organization>
+    <organization>
+        <name>rodneybeede.com</name>
+        <url>http://www.rodneybeede.com/</url>
+    </organization>
 
-	<developers>
-		<developer>
-			<id>rbeede</id>
-			<name>Rodney Beede</name>
-			<url>https://www.rodneybeede.com/</url>
-			<organization>rodneybeede.com</organization>
-			<organizationUrl>https://www.rodneybeede.com/</organizationUrl>
-			<roles>
-				<role>architect</role>
-				<role>developer</role>
-				<role>tester</role>
-			</roles>
-		</developer>
-	</developers>
+    <developers>
+        <developer>
+            <id>rbeede</id>
+            <name>Rodney Beede</name>
+            <url>https://www.rodneybeede.com/</url>
+            <organization>rodneybeede.com</organization>
+            <organizationUrl>https://www.rodneybeede.com/organizationUrl>
+            <roles>
+                <role>architect</role>
+                <role>developer</role>
+                <role>tester</role>
+            </roles>
+        </developer>
+    </developers>
 
-	<dependencies>
-		<dependency>
-			<groupId>org.apache.logging.log4j</groupId>
-			<artifactId>log4j-api</artifactId>
-			<version>2.25.0</version>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.logging.log4j</groupId>
-			<artifactId>log4j-core</artifactId>
-			<version>2.25.0</version>
-		</dependency>
-		<dependency>
-			 <groupId>commons-codec</groupId>
-			 <artifactId>commons-codec</artifactId>
-			 <version>1.17.1</version>
-		</dependency>
-	</dependencies>
-	
-	<properties>
-		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-	</properties>
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <log4j2.version>2.26.1</log4j2.version>
+        <commons.codec.version>1.16</commons.codec.version>
+        <maven.compiler.plugin.version>3.16.0</maven.compiler.plugin.version>
+        <maven.assembly.plugin.version>3.8.0</maven.assembly.plugin.version>
+    </properties>
 
-	<build>
-		<plugins>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-compiler-plugin</artifactId>
-				<version>3.14.0</version>
-				<configuration>
-					<release>8</release>
-				</configuration>
-			</plugin>
-			<plugin>
-				<artifactId>maven-assembly-plugin</artifactId>
-				<version>3.7.1</version>
-				<configuration>
-					<descriptorRefs>
-						<descriptorRef>jar-with-dependencies</descriptorRef>
-					</descriptorRefs>
-					<archive>
-						<manifest>
-							<mainClass>com.rodneybeede.software.hashdirectorytree.Main</mainClass>
-						</manifest>
-					</archive>
-				</configuration>
-				<executions>
-					<execution>
-						<id>make-assembly</id>
-						<phase>package</phase>
-						<goals>
-							<goal>single</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
-		</plugins>
-	</build>
+    <dependencies>
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-api</artifactId>
+            <version>${log4j2.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-core</artifactId>
+            <version>${log4j2.version}</version>
+        </dependency>
+        <dependency>
+             <groupId>commons-codec</groupId>
+             <artifactId>commons-codec</artifactId>
+             <version>${commons.codec.version}</version>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>${maven.compiler.plugin.version}</version>
+                <configuration>
+                    <release>8</release>
+                </configuration>
+            </plugin>
+            <plugin>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <version>${maven.assembly.plugin.version}</version>
+                <configuration>
+                    <descriptorRefs>
+                        <descriptorRef>jar-with-dependencies</descriptorRef>
+                    </descriptorRefs>
+                    <archive>
+                        <manifest>
+                            <mainClass>com.rodneybeede.software.hashdirectorytree.Main</mainClass>
+                        </manifest>
+                    </archive>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>make-assembly</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
 
 </project>
