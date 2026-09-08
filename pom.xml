@@ -44,8 +44,8 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <log4j2.version>2.26.1</log4j2.version>
         <commons.codec.version>1.16</commons.codec.version>
-        <maven.compiler.plugin.version>LATEST</maven.compiler.plugin.version>
-        <maven.assembly.plugin.version>LATEST</maven.assembly.plugin.version>
+        <maven.compiler.plugin.version>3.16.0</maven.compiler.plugin.version>
+        <maven.assembly.plugin.version>3.8.0</maven.assembly.plugin.version>
     </properties>
 
     <dependencies>
